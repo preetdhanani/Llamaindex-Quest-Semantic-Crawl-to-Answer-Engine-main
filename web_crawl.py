@@ -1,15 +1,16 @@
 import concurrent.futures
-import requests
+import requests,os
 from bs4 import BeautifulSoup
 import json
 import traceback
 import logging
 from urllib.parse import urljoin
 import concurrent
+import pickle
 
 # Set up logging to a file
 logging.basicConfig(
-    filename='crawler_logs.log',  # Name of the log file
+    filename='static/crawler_logs.log',  # Name of the log file
     level=logging.INFO,           # Log level (INFO, WARNING, ERROR, etc.)
     format='%(asctime)s - %(levelname)s - %(message)s',  # Log format
     datefmt='%Y-%m-%d %H:%M:%S'   # Date format
@@ -22,9 +23,9 @@ class web_crawler:
         self.max_retries = max_retries
         self.visited = set()
         self.all_text = []
-        self.successful_urls_file = "successful_urls.txt"
-        self.crawled_data_file = "crawled_data.json"
-        self.error_log_file = "error_log.txt"
+        self.successful_urls_file = "static/successful_urls.txt"
+        self.crawled_data_file = "static/crawled_data.json"
+        self.error_log_file = "static/error_log.txt"
         
     def get_page_content(self, url):
         for attempt in range(self.max_retries):
@@ -34,6 +35,8 @@ class web_crawler:
                 response.raise_for_status()
                 soup = BeautifulSoup(response.content, 'html.parser')
                 text_content = soup.get_text()
+                text_content = " ".join(line.strip() for line in text_content.split("\n") if line.strip())
+
                 with open(self.successful_urls_file, 'a') as f:
                     f.write(url + '\n')
                 with open(self.crawled_data_file, 'a') as f:
@@ -61,9 +64,10 @@ class web_crawler:
         
 
     def recursive_crawl(self, url, depth=0):
+             
         if depth > self.max_depth or url in self.visited:
             return
-        
+            
         self.visited.add(url)
         html_content, text_content = self.get_page_content(url)
 
@@ -71,13 +75,21 @@ class web_crawler:
             self.all_text.append((text_content, url))
             links = self.parse_links(url, html_content)
 
-            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-                futures = [executor.submit(self.recursive_crawl, link, depth + 1) for link in links]
+            with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+                futures = [executor.submit(self.recursive_crawl, link, depth +1 ) for link in links]
 
     def crawl(self):
         logging.info(f"Starting crawl from: {self.start_url}")
-        self.recursive_crawl(self.start_url)
+        if not os.path.exists("static/successful_urls.txt"):
+            self.recursive_crawl(self.start_url)
+        else:
+            print("Crawling process completed. Exiting.")
         logging.info("Crawling process completed.")
+        if not os.path.exists("static/all_text.pkl"):
+            with open("static/all_text.pkl", "wb") as f:
+                pickle.dump(self.all_text, f)
+        else:
+            self.all_text = pickle.load(open("static/all_text.pkl", "rb"))
 
     def save_all_text(self, filename):
         with open(filename, 'w', encoding='utf-8') as f:
