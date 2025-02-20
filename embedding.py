@@ -1,4 +1,5 @@
-from langchain.embeddings import HuggingFaceEmbeddings
+# from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 class Embedder:
     def __init__(self, model_name='sentence-transformers/all-MiniLM-L6-v2'):

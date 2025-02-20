@@ -1,1 +1,9 @@
-nlp/
+venv/
+.env
+static/
+
+static/all_text.pkl
+static/chunks_in_progress.txt
+static/crawled_data.json
+static/chunk_store.pkl
+static/all_text_content.txt
