@@ -1,12 +1,12 @@
-# CUDA Documentation QA System
+# llamaindex Documentation QA System
 
-This project implements a Question Answering (QA) system for CUDA documentation. It crawls the NVIDIA CUDA documentation, processes the data, stores it in a vector database, and uses advanced retrieval techniques to answer user queries.
+This project implements a Question Answering (QA) system for llamaindex documentation. It crawls the llamaindex documentation, processes the data, stores it in a vector database, and uses advanced retrieval techniques to answer user queries.
 
 ## Features
 
-- Web crawling of NVIDIA CUDA documentation
+- Web crawling of llamaindex documentation
 - Advanced data chunking based on semantic similarity
-- Vector embedding creation and storage in Milvus database
+- Vector embedding creation and storage in Faiss database
 - Query expansion for improved retrieval
 - Hybrid retrieval combining BM25 and BERT-based methods
 - Question answering using a Language Model
@@ -35,16 +35,15 @@ The main dependencies for this project are:
 - torch and transformers: For working with transformer models
 - streamlit: For creating web applications
 - selenium and webdriver_manager: For web scraping
-- pymilvus: For interacting with the Milvus vector database
+- Faiss: For interacting with vector database
 
 For a complete list of dependencies, refer to the `requirements.txt` file.
 
 ## Running the System
 
-1. Ensure that you have a Milvus server running. Refer to the [Milvus documentation](https://milvus.io/docs) for installation and setup instructions.
-
-2. Run the main script:
-   3. The system will start by crawling the CUDA documentation, processing the data, and storing it in the Milvus database. This initial setup may take some time.
+1. Run the main script:
+   
+2. The system will start by crawling the llamaindex documentation, processing the data, and storing it in the faiss database. This initial setup may take some time.
 
 4. Once the setup is complete, you can start asking questions about CUDA. The system will provide answers based on the retrieved information.
 
