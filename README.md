@@ -56,7 +56,6 @@ For a complete list of dependencies, refer to the `requirements.txt` file.
 - `faiss_help.py`: Manages interactions with the Milvus database.
 - `grq.py`: Manages the question answering process using a language model. 
 - `retrieval/hybrid_retrieval.py`: Contains the hybrid retrieval logic.
-- `qa/llm_qa.py`: 
 
 ## Customization
 
