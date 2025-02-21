@@ -8,27 +8,29 @@ import os
 from grq import GroqAnswering
 
 url = "https://docs.llamaindex.ai/en/stable/"
-
+urls = url.split('/')[2]
  
 craw = web_crawler(url)
 craw.crawl() 
+
  
 # Data Chunking
 embedder = Embedder()
-chunker = Chunker(embedder.embeddings)
+chunker = Chunker(embedder.embeddings,url)
 chunks = chunker.chunk_text(craw.all_text)
 
-# Embedding Creation
-if not os.path.exists("static/embeddings.pkl"):
-    embeddings = embedder.create_embeddings(chunks)
-    pickle.dump(embeddings, open("static/embeddings.pkl", "wb"))
-else:
-    embeddings = pickle.load(open("static/embeddings.pkl", "rb"))
 
+# Embedding Creation
+if not os.path.exists(f"static/{urls}_embeddings.pkl"):
+    embeddings = embedder.create_embeddings(chunks)
+    pickle.dump(embeddings, open(f"static/{urls}_embeddings.pkl", "wb"))
+else:
+    embeddings = pickle.load(open(f"static/{urls}_embeddings.pkl", "rb"))
+    print("embeddings loaded")
 print("embaddings done")
 
 # storing Vectors
-faiss = Faisss(embeddings)
+faiss = Faisss(embeddings,urls)
 faiss = faiss.toFaiss()
 
 
@@ -42,7 +44,7 @@ distance, indices = faiss.search(query_embedding,2)
 print("Nearest Neighbors' Indices:", indices)
 print("Distances:", distance)
 
-chunksss= pickle.load(open("static/chunk_store.pkl", "rb"))
+chunksss= pickle.load(open(f"static/{urls}_chunk_store.pkl", "rb"))
 
 # for idx in indices[0]:  # FAISS returns 2D array, so take first list
 #     print(f"Retrieved Text: {chunksss[idx]}")
