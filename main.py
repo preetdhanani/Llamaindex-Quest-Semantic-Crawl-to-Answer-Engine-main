@@ -1,7 +1,7 @@
 from web_crawl import web_crawler
 from embedding import Embedder
 from chunking import Chunker
-from faiss_help import Faisss
+from hybrid_retrieval import HybridSearch
 import numpy as np
 import pickle
 import os
@@ -29,38 +29,29 @@ else:
     print("embeddings loaded")
 print("embaddings done")
 
-# storing Vectors
-faiss = Faisss(embeddings,urls)
-faiss = faiss.toFaiss()
 
+hybrid_faiss = HybridSearch(embeddings, chunks, urls )
 
-# Example query 
 
 while True:
 
     query = input("Enter Text:")
-    if query.lower() == 'quite':
+    if query.lower() == 'quit':
         break
     else:
         query = chunker.chunk_question(query)
         # Convert query to embedding
         query_embedding = np.array(embedder.create_embeddings(query), dtype=np.float32)
 
-        distance, indices = faiss.search(query_embedding,2)
-        # print("Nearest Neighbors' Indices:", indices)
-        # print("Distances:", distance)
+        context = hybrid_faiss.search(query_embedding, query, k=2, alpha=0.7)
 
-        chunksss= pickle.load(open(f"static/{urls}_chunk_store.pkl", "rb"))
-
-        # for idx in indices[0]:  # FAISS returns 2D array, so take first list
-        #     print(f"Retrieved Text: {chunksss[idx]}")
+        # print(context)
         # Retrieve actual text chunks based on indices
         max_chunks =3
-        retrieved_chunks = [chunksss[idx] for idx in indices[0][:max_chunks]]  # FAISS returns 2D array, so take first list
-        # print(retrieved_chunks)
 
         # Combine chunks into a single context string
-        context = "\n\n".join(doc.page_content[:2000] for doc in retrieved_chunks)
+        context = context[:max_chunks]
+        context = "\n\n".join(doc.page_content[:2000] for doc in context)
 
         responce = GroqAnswering(context,query)
 
