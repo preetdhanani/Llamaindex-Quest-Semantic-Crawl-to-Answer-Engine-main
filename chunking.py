@@ -45,13 +45,10 @@ class Chunker:
 
     def chunk_question(self, query):
         docs = []
-        print(query)
         chunks = self.text_splitter.create_documents([query])
-        print(chunks)
         for chunk in chunks:
             doc = Document(page_content=chunk.page_content,)
-
             docs.append(doc)
-        print(docs)
+        
         return docs
 

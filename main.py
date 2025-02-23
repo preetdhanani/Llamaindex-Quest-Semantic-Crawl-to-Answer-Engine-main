@@ -7,7 +7,7 @@ import pickle
 import os
 from grq import GroqAnswering
 
-url = "https://docs.llamaindex.ai/en/stable/"
+url = "https://docs.llamaindex.ai/"
 urls = url.split('/')[2]
  
 craw = web_crawler(url)
