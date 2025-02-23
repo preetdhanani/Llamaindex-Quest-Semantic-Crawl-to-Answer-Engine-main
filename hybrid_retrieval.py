@@ -24,9 +24,7 @@ class HybridSearch:
             self.index = faiss.read_index(f"static/{self.urls}_faiss_index.bin")
             print("DB load Successfull")
         else:
-            print("///////////////////")
-            print(self.embeddings.shape)
-            print("DB Creatting")
+            print("DB Creating")
             
             self.index = faiss.IndexFlatL2(self.embedding_dims)
             self.index.add(self.embeddings)
